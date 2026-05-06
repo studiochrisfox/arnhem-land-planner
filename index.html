@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top End & Arnhem Land — June 2027 Expedition Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Space+Mono:wght@400;700&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  :root {
+    --bark:    #3D2E1E;
+    --red:     #B5411A;
+    --amber:   #C97D2A;
+    --gold:    #E8B84B;
+    --sand:    #E6D5B8;
+    --mist:    #F5EEE0;
+    --teal:    #2E7D6E;
+    --sky:     #4A8FA0;
+    --stone:   #7A6E5E;
+    --white:   #FDFAF4;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--mist); color:var(--bark); font-family:'Mulish',sans-serif; font-weight:300; line-height:1.65; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--bark);
+    padding: 52px 32px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content:'';
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 80% 30%, rgba(181,65,26,0.3) 0%, transparent 55%),
+      radial-gradient(ellipse at 10% 80%, rgba(46,125,110,0.2) 0%, transparent 50%);
+  }
+  .hero-inner { position:relative; max-width:860px; margin:0 auto; }
+  .hero-eyebrow {
+    font-family:'Space Mono',monospace;
+    font-size:10px; letter-spacing:0.25em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:14px;
+  }
+  .hero h1 {
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(34px,5.5vw,60px); font-weight:700;
+    color:var(--white); line-height:1.05; margin-bottom:6px;
+  }
+  .hero h1 em { font-style:italic; color:var(--gold); font-weight:600; }
+  .hero-sub {
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:clamp(15px,2vw,19px); color:rgba(253,250,244,0.6);
+    margin-bottom:20px;
+  }
+  .hero-meta {
+    font-family:'Space Mono',monospace; font-size:11px;
+    color:rgba(253,250,244,0.45); letter-spacing:0.1em;
+    display:flex; gap:22px; flex-wrap:wrap;
+  }
+  .hero-meta span::before { content:'— '; color:var(--red); }
+
+  /* ── PERMIT BANNER ── */
+  .permit-banner {
+    background:linear-gradient(135deg, #7B1F08, #B5411A);
+    padding:14px 32px;
+    font-family:'Space Mono',monospace; font-size:11px;
+    letter-spacing:0.1em; color:rgba(255,255,255,0.9);
+    text-align:center;
+  }
+  .permit-banner strong { color:var(--gold); }
+
+  /* ── NAV ── */
+  .tab-nav {
+    background:var(--bark); border-top:1px solid rgba(255,255,255,0.07);
+    display:flex; overflow-x:auto; scrollbar-width:none;
+  }
+  .tab-nav::-webkit-scrollbar { display:none; }
+  .tab-btn {
+    font-family:'Space Mono',monospace; font-size:10px;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:rgba(253,250,244,0.4); background:none; border:none;
+    padding:13px 20px; cursor:pointer; white-space:nowrap;
+    border-bottom:2px solid transparent; transition:all 0.2s;
+  }
+  .tab-btn:hover { color:var(--sand); }
+  .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+  /* ── MAIN ── */
+  .main { max-width:860px; margin:0 auto; padding:36px 24px 80px; }
+  .section { display:none; }
+  .section.active { display:block; }
+
+  /* ── STAT CARDS ── */
+  .summary-row {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:12px; margin-bottom:28px;
+  }
+  .stat-card {
+    background:var(--bark); border-radius:6px; padding:16px 18px; text-align:center;
+  }
+  .stat-num { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700; color:var(--gold); line-height:1; }
+  .stat-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:rgba(253,250,244,0.45); margin-top:4px; }
+
+  /* ── SECTION HEADING ── */
+  .section-heading {
+    font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:700;
+    color:var(--bark); margin-bottom:6px;
+  }
+  .section-sub { font-size:14px; color:var(--stone); margin-bottom:24px; }
+  h4 {
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--red); margin-bottom:12px; margin-top:20px;
+  }
+  h4:first-child { margin-top:0; }
+  .divider { height:1px; background:rgba(61,46,30,0.12); margin:28px 0; }
+
+  /* ── ALERTS ── */
+  .alert {
+    border-radius:5px; padding:14px 16px; margin-bottom:16px;
+    font-size:13.5px; display:flex; gap:10px; align-items:flex-start;
+  }
+  .alert-red   { background:rgba(181,65,26,0.09); border-left:3px solid var(--red); color:var(--bark); }
+  .alert-teal  { background:rgba(46,125,110,0.09); border-left:3px solid var(--teal); color:var(--bark); }
+  .alert-amber { background:rgba(201,125,42,0.12); border-left:3px solid var(--amber); color:var(--bark); }
+  .alert em { font-style:normal; font-weight:500; }
+  .alert-icon { font-size:17px; flex-shrink:0; margin-top:-1px; }
+
+  /* ── CARDS ── */
+  .card {
+    background:var(--white); border-radius:6px;
+    border:1px solid rgba(61,46,30,0.1); margin-bottom:18px; overflow:hidden;
+  }
+  .card-header {
+    padding:16px 20px 14px; display:flex; align-items:center;
+    gap:14px; cursor:pointer; user-select:none;
+  }
+  .card-icon {
+    width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; flex-shrink:0;
+  }
+  .card-header h3 {
+    font-family:'Cormorant Garamond',serif; font-size:17px;
+    font-weight:700; flex:1;
+  }
+  .card-header .toggle { font-size:16px; color:var(--stone); transition:transform 0.2s; }
+  .card-header.open .toggle { transform:rotate(180deg); }
+  .card-body {
+    padding:0 20px 18px; display:none;
+    border-top:1px solid rgba(61,46,30,0.08); padding-top:14px;
+  }
+  .card-body.open { display:block; }
+  .card-body p { font-size:13.5px; margin-bottom:10px; color:var(--stone); }
+  .card-body p:last-child { margin-bottom:0; }
+  .card-body strong { color:var(--bark); font-weight:500; }
+
+  /* ── ITINERARY ── */
+  .day-entry { display:grid; grid-template-columns:56px 1fr; gap:0 14px; }
+  .day-col { display:flex; flex-direction:column; align-items:center; padding-top:18px; position:relative; }
+  .day-dot {
+    width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono',monospace; font-size:9px; z-index:1;
+  }
+  .day-line { flex:1; width:1px; background:rgba(61,46,30,0.15); margin-top:4px; min-height:20px; }
+  .day-content { padding:14px 0 22px; border-bottom:1px dashed rgba(61,46,30,0.12); }
+  .day-entry:last-child .day-content { border-bottom:none; }
+  .day-title { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:700; margin-bottom:2px; }
+  .day-sub {
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .day-desc { font-size:13.5px; color:var(--stone); }
+  .day-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .tag { font-family:'Space Mono',monospace; font-size:9px; padding:3px 8px; border-radius:3px; letter-spacing:0.04em; }
+  .tag-permit { background:rgba(181,65,26,0.1); color:var(--red); }
+  .tag-fuel   { background:rgba(201,125,42,0.12); color:#7A4A10; }
+  .tag-camp   { background:rgba(232,184,75,0.15); color:#7A5A10; }
+  .tag-swim   { background:rgba(74,143,160,0.12); color:var(--sky); }
+  .tag-walk   { background:rgba(46,125,110,0.12); color:var(--teal); }
+  .tag-art    { background:rgba(61,46,30,0.08); color:var(--bark); border:1px solid rgba(61,46,30,0.15); }
+  .tag-kids   { background:rgba(46,125,110,0.1); color:#1A5F52; }
+  .tag-book   { background:rgba(181,65,26,0.08); color:var(--red); border:1px solid rgba(181,65,26,0.2); }
+  .tag-work   { background:rgba(74,143,160,0.15); color:#1E5F70; }
+
+  /* ── TABLE ── */
+  .data-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .data-table th {
+    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.1em;
+    text-transform:uppercase; text-align:left; color:var(--red);
+    padding:8px 10px; background:rgba(181,65,26,0.05);
+    border-bottom:1px solid rgba(181,65,26,0.2);
+  }
+  .data-table td {
+    padding:10px 10px; border-bottom:1px dashed rgba(61,46,30,0.1);
+    color:var(--stone); vertical-align:top;
+  }
+  .data-table tr:last-child td { border-bottom:none; }
+  .data-table td strong { color:var(--bark); font-weight:500; }
+  .p-now  { color:var(--red); font-weight:500; font-family:'Space Mono',monospace; font-size:10px; }
+  .p-soon { color:var(--amber); font-weight:500; font-family:'Space Mono',monospace; font-size:10px; }
+  .p-pre  { color:var(--teal); font-weight:500; font-family:'Space Mono',monospace; font-size:10px; }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style:none; }
+  .checklist li {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:9px 0; border-bottom:1px dashed rgba(61,46,30,0.1);
+    font-size:13.5px; color:var(--stone);
+  }
+  .checklist li:last-child { border-bottom:none; }
+  .checklist input[type="checkbox"] { width:15px; height:15px; margin-top:2px; flex-shrink:0; accent-color:var(--red); cursor:pointer; }
+  .checklist label { cursor:pointer; }
+  .checklist input:checked + label { text-decoration:line-through; opacity:0.45; }
+  .checklist .cat {
+    font-family:'Space Mono',monospace; font-size:9px; text-transform:uppercase;
+    letter-spacing:0.12em; color:var(--red); padding:16px 0 4px;
+    border-bottom:none; font-weight:700;
+  }
+
+  /* ── PLAIN LIST ── */
+  ul.plain { list-style:none; padding:0; }
+  ul.plain li {
+    font-size:13.5px; color:var(--stone); padding:5px 0;
+    border-bottom:1px dashed rgba(61,46,30,0.08);
+    display:flex; gap:8px;
+  }
+  ul.plain li::before { content:'→'; color:var(--red); flex-shrink:0; }
+  ul.plain li:last-child { border-bottom:none; }
+
+  /* ── BUDGET ── */
+  .budget-hero {
+    background:var(--bark); border-radius:8px; padding:22px 24px;
+    margin:20px 0; display:flex; align-items:center;
+    justify-content:space-between; flex-wrap:wrap; gap:16px;
+  }
+  .bh-label { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:rgba(253,250,244,0.45); margin-bottom:6px; }
+  .bh-total { font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:700; color:var(--gold); line-height:1; }
+  .bh-sub { font-family:'Space Mono',monospace; font-size:10px; color:rgba(253,250,244,0.35); margin-top:4px; }
+  .bh-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .bh-cell { background:rgba(255,255,255,0.06); border-radius:5px; padding:12px 16px; text-align:center; }
+  .bh-val { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; line-height:1; }
+  .bh-key { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(253,250,244,0.35); margin-top:3px; }
+
+  .slider-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:4px; }
+  .slider-block label { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); display:block; margin-bottom:8px; }
+  .slider-row { display:flex; align-items:center; gap:12px; }
+  .slider-row input[type=range] { flex:1; accent-color:var(--red); }
+  .slider-row span { font-family:'Space Mono',monospace; font-size:13px; font-weight:700; min-width:60px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Expedition Planner &nbsp;·&nbsp; 2027</div>
+    <h1>Top End &amp; <em>Arnhem Land</em></h1>
+    <div class="hero-sub">Katherine Gorge · Mimal Country · Yirrkala · Maningrida · Kakadu</div>
+    <div class="hero-meta">
+      <span>Depart Darwin ~18 June 2027</span>
+      <span>Ford Everest + Cub Escape</span>
+      <span>Chris, Lewis &amp; Reuben</span>
+      <span>~13 days · Back ~1 July</span>
+    </div>
+  </div>
+</div>
+
+<div class="permit-banner">
+  ⚠ &nbsp;<strong>PERMIT REQUIRED BEFORE DEPARTURE:</strong>&nbsp; NLC Transit Permit (Central Arnhem Road) · NLC Community Permit (Weemol/Bulman) · Dhimurru Visitor Access Permit (East Arnhem) · Kakadu Park Pass &nbsp;⚠
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+  <button class="tab-btn" onclick="showTab('itinerary')">Itinerary</button>
+  <button class="tab-btn" onclick="showTab('map')">Map</button>
+  <button class="tab-btn" onclick="showTab('permits')">Permits</button>
+  <button class="tab-btn" onclick="showTab('vehicle')">Vehicle</button>
+  <button class="tab-btn" onclick="showTab('bookings')">Bookings</button>
+  <button class="tab-btn" onclick="showTab('packing')">Packing</button>
+  <button class="tab-btn" onclick="showTab('budget')">Budget</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════════════════ OVERVIEW -->
+<div class="section active" id="overview">
+
+  <div class="summary-row">
+    <div class="stat-card"><div class="stat-num">~3,200</div><div class="stat-label">km total</div></div>
+    <div class="stat-card"><div class="stat-num">13</div><div class="stat-label">days est.</div></div>
+    <div class="stat-card"><div class="stat-num">18 Jun</div><div class="stat-label">depart Darwin</div></div>
+    <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">permit types</div></div>
+  </div>
+
+  <div class="alert alert-red">
+    <div class="alert-icon">🔑</div>
+    <div><em>Permits are the critical path on this trip.</em> Unlike the Gibb River Road, you cannot enter Arnhem Land without NLC permits in hand. Apply for the NLC Central Arnhem Road transit permit, the Weemol/Bulman community permit, and the Dhimurru East Arnhem permit well before departure. All are free or low-cost and processed online — but allow 2–4 weeks. See the Permits tab for full detail.</div>
+  </div>
+
+  <div class="alert alert-amber">
+    <div class="alert-icon">🚌</div>
+    <div><em>Cub Escape camper trailer — important check.</em> The NLC officially states the Central Arnhem Road is not suitable for caravans and will not issue permits for caravan towing. However, the Cub Escape is a purpose-built off-road camper trailer — not a caravan. When applying for your NLC permit, describe it clearly as a heavy-duty off-road camper trailer. In practice many Cub Escape and similar trailers have done the Central Arnhem Road successfully. The road itself is rough — bull dust, corrugations, some water crossings — but nothing the Cub Escape can't handle. Confirm with NLC before departure.</div>
+  </div>
+
+  <div class="alert alert-teal">
+    <div class="alert-icon">🎯</div>
+    <div><em>Why this route makes sense for you.</em> The Central Arnhem Road is genuinely one of Australia's great drives — and you have a professional connection at Weemol through your Mimal SSP work that makes this far more than a tourist trip. Lewis and Reuben will experience something most Australians never will: deep Country, Yolŋu art at its source in Yirrkala, the billabongs of Kakadu. June timing is perfect — dry season, cooler temperatures, all roads open.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-heading">The Route</div>
+  <p class="section-sub">Darwin → Katherine Gorge (1 night) → Central Arnhem Road → Weemol/Bulman (Mimal work) → Nhulunbuy/Yirrkala → return west → Maningrida (via Jabiru/Gunbalanya) → Kakadu → Darwin. Roughly circular, all within the Top End.</p>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div class="card-icon" style="background:rgba(74,143,160,0.1)">🏞</div>
+      <h3>Katherine Gorge — the opener</h3>
+      <span class="toggle">▾</span>
+    </div>
+    <div class="card-body">
+      <p>Nitmiluk (Katherine Gorge) is one of the NT's great natural wonders and only 300 km from Darwin — a perfect first night with the boys. The gorge system has 13 interconnected gorges carved through sandstone. In June the water levels are perfect for swimming in the lower gorges. The 2-gorge walk (8.4 km, moderate) is excellent for Lewis at 10; Reuben (now 7) will need a hand on some sections but is totally doable. Canoe hire is another option — paddle into the gorge system.</p>
+      <p>Nitmiluk Centre is excellent for Indigenous cultural context before heading into Arnhem Land — the Jawoyn people's connection to Country is presented beautifully and sets the tone for what's ahead.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div class="card-icon" style="background:rgba(181,65,26,0.1)">🗺</div>
+      <h3>Central Arnhem Road — what to expect</h3>
+      <span class="toggle">▾</span>
+    </div>
+    <div class="card-body">
+      <p><strong>Distance:</strong> Katherine to Nhulunbuy is approximately 729 km, with the sealed section ending around 52 km from Katherine. The rest is formed gravel — variable quality with corrugations, bull dust pockets and some water crossings.</p>
+      <p><strong>Speed:</strong> 80 km/h max recommended on the unsealed sections. At 12L/100km you'll consume more at speed. Budget 8–10 hours driving time Katherine to Nhulunbuy, split over 2 days with an overnight at Mainoru or a gravel pit.</p>
+      <p><strong>Fuel:</strong> Available at Wulugarr/Beswick (~60 km from Stuart Hwy), Mainoru Store (~197 km), and Bulman (~256 km). Nhulunbuy has a BP with 24/7 diesel. <strong>With your 120L ARB tank + 40L jerry cans, you have 160L total — more than enough to cover any section.</strong></p>
+      <p><strong>Trailers:</strong> The NLC's official position is no caravans, but off-road camper trailers are a different category. The road has been driven by Cub Escape and similar trailers. Confirm with NLC when applying for your permit. Road conditions in June are at their best.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div class="card-icon" style="background:rgba(46,125,110,0.1)">🎨</div>
+      <h3>Yirrkala + Nhulunbuy — cultural heart</h3>
+      <span class="toggle">▾</span>
+    </div>
+    <div class="card-body">
+      <p>Yirrkala is one of the most significant places in Australian Aboriginal art history — the Yirrkala Church Panels (1962) were Australia's first formal petition by Aboriginal people to Parliament. The <strong>Buku-Larrŋgay Mulka Centre</strong> is a world-class art centre and museum, open Mon–Fri 8am–4:30pm, Sat 9am–12pm. For the boys, seeing bark paintings and listening to the stories behind them in their Country of origin is a completely different experience to seeing them in a Darwin gallery.</p>
+      <p>Nhulunbuy is a real town — Woolworths, a hospital, pub, accommodation. Stock up here before heading back west. East Arnhem Land is a dry area; plan ahead with any beverages before arrival.</p>
+      <p><strong>Note on Chris's SSP work:</strong> Given your Mimal partnership, arriving in Yirrkala with that context will enrich the visit enormously. Consider whether any of your research contacts could facilitate an introduction to local rangers or artists while you're there — Lewis and Reuben would benefit greatly.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div class="card-icon" style="background:rgba(46,125,110,0.1)">🐊</div>
+      <h3>Maningrida + Kakadu — the return</h3>
+      <span class="toggle">▾</span>
+    </div>
+    <div class="card-body">
+      <p>Maningrida is not on a through-road. The road between Maningrida and Ramingining is closed to all non-local traffic, so you access it via Jabiru and Cahills Crossing (permit via NLC). The road from Jabiru to Maningrida is ~270 km unsealed. It's achievable as a one-night detour before heading into Kakadu proper. <strong>Maningrida Arts and Culture</strong> is one of Australia's most important Indigenous art centres — over 800 artists across 34 homelands. A brief visit here is meaningful.</p>
+      <p>Kakadu on the return is the reward — Ubirr rock art at sunset, Yellow Water billabong cruise at dawn, Jim Jim Falls (4WD track), Maguk (Barramundi Gorge) swim. For Lewis and Reuben, Kakadu ties together everything they've seen: Country, art, wildlife, water. The Bowali Visitor Centre has excellent interactive displays for kids.</p>
+    </div>
+  </div>
+
+</div><!-- end overview -->
+
+<!-- ══════════════════════════════════════════════════════ ITINERARY -->
+<div class="section" id="itinerary">
+
+  <div class="section-heading">13-Day Itinerary</div>
+  <p class="section-sub">18 Jun → ~1 Jul 2027. Darwin circular. Chris + Lewis (10) + Reuben (7). Includes working visit to Mimal/Weemol.</p>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+    <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:4px 10px;border-radius:3px;background:rgba(61,46,30,0.08);color:var(--bark)">⬛ Transit</span>
+    <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:4px 10px;border-radius:3px;background:rgba(74,143,160,0.15);color:var(--sky)">🟦 Katherine</span>
+    <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:4px 10px;border-radius:3px;background:rgba(181,65,26,0.12);color:var(--red)">🟥 Central Arnhem Road</span>
+    <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:4px 10px;border-radius:3px;background:rgba(232,184,75,0.2);color:#7A5A10">🟨 Mimal / Yirrkala</span>
+    <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:4px 10px;border-radius:3px;background:rgba(46,125,110,0.12);color:var(--teal)">🟩 Maningrida + Kakadu</span>
+  </div>
+
+  <div class="card" style="padding:0">
+   <div style="padding:20px 22px 4px">
+
+    <!-- D1 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(74,143,160,0.2);color:var(--sky)">D1</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Thu 18 Jun · 300 km sealed · 3.5 hrs</div>
+        <div class="day-title">Darwin → Katherine Gorge</div>
+        <div class="day-desc">Depart Darwin early. Fill the 120L ARB tank. Stuart Highway south to Katherine. Check into Nitmiluk Caravan Park (10 km to the gorge). Afternoon: walk down to the gorge for a swim in the lower pools — the sandstone walls and clear water in June are stunning. Nitmiluk Visitor Centre before close — excellent Jawoyn cultural exhibits that set the context for everything ahead on this trip.</div>
+        <div class="day-tags"><span class="tag tag-swim">Lower gorge swim</span><span class="tag tag-walk">Nitmiluk Visitor Centre</span><span class="tag tag-fuel">Darwin fill · Katherine top-up</span><span class="tag tag-camp">Nitmiluk CP</span></div>
+      </div>
+    </div>
+
+    <!-- D2 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(74,143,160,0.2);color:var(--sky)">D2</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Fri 19 Jun · Katherine Gorge full day</div>
+        <div class="day-title">Katherine Gorge — Two-Gorge Walk + Canoe</div>
+        <div class="day-desc">Full gorge day. Morning: Two-Gorge Walk (8.4 km return, moderate — Lewis will nail it, hand for Reuben on rocky sections). The walk crosses from the 1st to 2nd gorge via a short overland portage — the colours of the escarpment in the dry season morning light are extraordinary. Afternoon: hire canoes and paddle back through the first gorge. Freshwater crocs are common — spot them from the water, they're harmless. Campfire dinner. Early night — tomorrow is a big driving day.</div>
+        <div class="day-tags"><span class="tag tag-walk">Two-Gorge Walk 8.4 km</span><span class="tag tag-swim">Gorge swimming</span><span class="tag tag-kids">Canoe hire</span><span class="tag tag-camp">Nitmiluk night 2</span></div>
+      </div>
+    </div>
+
+    <!-- D3 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(181,65,26,0.2);color:var(--red)">D3</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Sat 20 Jun · ~350 km · sealed then unsealed · early start</div>
+        <div class="day-title">Katherine → Mainoru Store (halfway on Central Arnhem Road)</div>
+        <div class="day-desc">On the road by 6am. South on Stuart Hwy to the Central Arnhem Road turnoff (~52 km south of Katherine). <strong>Air down the Scorpion AT+s before the unsealed section.</strong> First fuel: Wulugarr/Beswick (~60 km). Then push east — the road improves and worsens in patches. Mainoru Store (~197 km from Stuart Hwy) is the overnight. Camp here ($30–40 unpowered) or a nearby gravel pit. Stock up on water and any supplies needed.</div>
+        <div class="day-tags"><span class="tag tag-fuel">Beswick fuel · Mainoru Store fuel</span><span class="tag tag-camp">Mainoru Store camp (~$35)</span><span class="tag tag-permit">NLC transit permit in vehicle</span></div>
+      </div>
+    </div>
+
+    <!-- D4 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(181,65,26,0.2);color:var(--red)">D4</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Sun 21 Jun · ~130 km unsealed · Weemol detour</div>
+        <div class="day-title">Mainoru → Bulman → Weemol (Mimal Ranger Base)</div>
+        <div class="day-desc">Bulman fuel (~60 km from Mainoru — <strong>NLC community permit required to enter, fill up here</strong>). Then the short detour to Weemol and the Mimal Ranger Base. This is Chris's professional visit — the boys see where the IPA management work happens on Country. Dominic Nicholls (CEO, Mimal) and the ranger team. Natalie Carey. The landscape context for everything in your SSP becomes viscerally real when you're standing in it. One night at Weemol/Bulman with permission from Mimal.</div>
+        <div class="day-tags"><span class="tag tag-work">Mimal Ranger Base visit</span><span class="tag tag-fuel">Bulman fuel — NLC permit needed</span><span class="tag tag-permit">Community permit required</span><span class="tag tag-camp">Weemol (arrange with Dominic)</span></div>
+      </div>
+    </div>
+
+    <!-- D5 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(232,184,75,0.3);color:#7A5A10">D5</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Mon 22 Jun · ~470 km unsealed · longest day on Arnhem Road</div>
+        <div class="day-title">Weemol → Nhulunbuy / Yirrkala</div>
+        <div class="day-desc">Early departure. The road from Bulman east to Gove runs through vast, quiet savannah — minimal traffic, wildlife, the odd road train delivering community freight. Conditions generally improve approaching the Gove Peninsula as mining traffic increases road maintenance frequency. Arrive Nhulunbuy late afternoon. <strong>Fill fuel at the BP (24/7 diesel).</strong> Check in at Walkabout Lodge or Gove Peninsula Motel — first proper accommodation since Katherine.</div>
+        <div class="day-tags"><span class="tag tag-fuel">Nhulunbuy BP — fill brim</span><span class="tag tag-camp">Walkabout Lodge or Gove Motel</span><span class="tag tag-book">Pre-book accommodation</span></div>
+      </div>
+    </div>
+
+    <!-- D6 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(232,184,75,0.3);color:#7A5A10">D6</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Tue 23 Jun · Yirrkala + Dhimurru beaches</div>
+        <div class="day-title">Yirrkala — Buku-Larrŋgay Mulka + Beach Camps</div>
+        <div class="day-desc">Morning: Buku-Larrŋgay Mulka Centre in Yirrkala (NLC permit required for Yirrkala visit). One of Australia's great art centres — bark paintings, the Yirrkala Church Panels, museum. For Lewis and Reuben, seeing Yolŋu art explained by people from that Country is irreplaceable. Afternoon: drive to a Dhimurru recreation area (Dhimurru Visitor Access Permit needed) — Garanhan (Macassan Beach) is one of the finest and most culturally significant coastal camps in Australia. White sand, blue Arafura Sea. Camp here tonight with the Dhimurru camping permit.</div>
+        <div class="day-tags"><span class="tag tag-art">Buku-Larrŋgay Mulka</span><span class="tag tag-swim">Macassan Beach / Dhimurru area</span><span class="tag tag-permit">NLC (Yirrkala) + Dhimurru permit</span><span class="tag tag-camp">Dhimurru camp site</span><span class="tag tag-kids">Rock art + Yolŋu stories</span></div>
+      </div>
+    </div>
+
+    <!-- D7 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(232,184,75,0.3);color:#7A5A10">D7</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Wed 24 Jun · rest day · Gove Peninsula</div>
+        <div class="day-title">2nd day — Gove Peninsula exploration</div>
+        <div class="day-desc">Slow morning at the Dhimurru camp. Explore more of the coastal recreation areas — Gupuru (Nhulunbuy area) for swimming and rock pools. Afternoon at the Gove Boat Club or Surf Club for lunch overlooking the water — a proper meal, cold drinks, the boys with their feet up after 700+ km of Arnhem Road. Restock supplies at Woolworths. Prepare for the long return leg tomorrow.</div>
+        <div class="day-tags"><span class="tag tag-swim">Coastal rock pools</span><span class="tag tag-kids">Gove Boat Club lunch</span><span class="tag tag-camp">Dhimurru or Nhulunbuy accommodation</span></div>
+      </div>
+    </div>
+
+    <!-- D8 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(181,65,26,0.2);color:var(--red)">D8</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Thu 25 Jun · ~470 km unsealed · return west · early start</div>
+        <div class="day-title">Nhulunbuy → Mainoru (overnight midway)</div>
+        <div class="day-desc">On the road by 6am. Reverse of the D5 run. Audiobooks from departure. Fill at Bulman (~470 km in from Gove) and stop for a break. The sunset on the Central Arnhem Road savannah in the dry season is extraordinary — deep red sky, termite mounds silhouetted, flocks of birds coming in to roost. Camp again at Mainoru Store or the free camp at the turnoff intersection.</div>
+        <div class="day-tags"><span class="tag tag-fuel">Bulman fuel stop</span><span class="tag tag-camp">Mainoru overnight</span></div>
+      </div>
+    </div>
+
+    <!-- D9 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(46,125,110,0.2);color:var(--teal)">D9</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Fri 26 Jun · ~270 km unsealed → Jabiru</div>
+        <div class="day-title">Mainoru → Katherine turnoff → Jabiru (via Kakadu Hwy)</div>
+        <div class="day-desc">Return to Stuart Highway junction, then north on the Kakadu Highway to Jabiru. Reinflate tyres to highway pressure before the sealed road sections. Jabiru fuel and supplies. This afternoon: Ubirr Rock Art — the finest accessible rock art gallery in Australia. The walk up the escarpment at dusk with the Arnhem Land escarpment stretching to the horizon is genuinely one of Australia's great experiences. Camp at Merl Campground (Ubirr area).</div>
+        <div class="day-tags"><span class="tag tag-art">Ubirr rock art + sunset escarpment</span><span class="tag tag-fuel">Jabiru fuel</span><span class="tag tag-camp">Merl Campground, Ubirr</span><span class="tag tag-kids">Best Kakadu intro for kids</span></div>
+      </div>
+    </div>
+
+    <!-- D10 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(46,125,110,0.2);color:var(--teal)">D10</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Sat 27 Jun · Maningrida detour day (optional) OR Kakadu focus</div>
+        <div class="day-title">Option A: Jabiru → Gunbalanya → Maningrida day trip</div>
+        <div class="day-desc"><strong>If doing Maningrida:</strong> Cross Cahill's Crossing to Gunbalanya (tide-dependent — check times, crocodiles present, cross only at low or slack water). Stop at Injalak Arts and Crafts at Gunbalanya — magnificent. Then push west to Maningrida (~270 km unsealed from Jabiru). Visit Maningrida Arts and Culture — 800+ artists, one of the world's most important Indigenous art centres. Return to Jabiru. <strong>This is a very long day — 500+ km unsealed — and only recommended if road conditions are confirmed good and you have full fuel.</strong> An overnight at Maningrida is better but requires accommodation pre-arrangement.<br><strong>Option B:</strong> Stay in Kakadu — Yellow Water billabong dawn cruise, Nourlangie rock art, Jim Jim Falls 4WD track (50 km unsealed, spectacular).</div>
+        <div class="day-tags"><span class="tag tag-art">Injalak Arts · Maningrida Arts &amp; Culture</span><span class="tag tag-swim">Jim Jim Falls (Option B)</span><span class="tag tag-permit">NLC permit for Gunbalanya</span><span class="tag tag-fuel">Full tank essential</span></div>
+      </div>
+    </div>
+
+    <!-- D11 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(46,125,110,0.2);color:var(--teal)">D11</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Sun 28 Jun · Kakadu full day</div>
+        <div class="day-title">Kakadu — Yellow Water + Maguk (Barramundi Gorge)</div>
+        <div class="day-desc">Dawn Yellow Water Billabong cruise from Cooinda (~6:15am departure) — crocodiles, jabiru storks, sea eagles, magpie geese by the thousands. Breakfast at Cooinda Lodge. Then south on the Kakadu Highway to Maguk (Barramundi Gorge) — 12 km unsealed track. A waterfall tumbling into a deep, clear pool surrounded by pandanus palms. Perfect swim — Lewis and Reuben will love it. Camp at Mardugal campground (Cooinda area) for the night.</div>
+        <div class="day-tags"><span class="tag tag-swim">Yellow Water boat + Maguk swim</span><span class="tag tag-kids">Dawn billabong cruise</span><span class="tag tag-camp">Mardugal Campground, Cooinda</span><span class="tag tag-walk">Maguk track — 12 km unsealed</span></div>
+      </div>
+    </div>
+
+    <!-- D12 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:rgba(46,125,110,0.2);color:var(--teal)">D12</div>
+        <div class="day-line"></div>
+      </div>
+      <div class="day-content">
+        <div class="day-sub">Mon 29 Jun · Kakadu south + Pine Creek</div>
+        <div class="day-title">Gunlom (Waterfall Creek) → Pine Creek</div>
+        <div class="day-desc">Gunlom is the Kakadu secret — a tiered waterfall with a plunge pool at the base and infinity pools at the top looking out over the escarpment. 33 km unsealed from the Kakadu Highway. The upper pool walk (2.8 km return) is one of the great short walks in the NT — extraordinary views. Swim in both the lower and upper pools. Then out to Pine Creek for the night — small historic gold rush town, cold beer, good camp.</div>
+        <div class="day-tags"><span class="tag tag-swim">Gunlom upper + lower pools</span><span class="tag tag-walk">2.8 km upper pool walk</span><span class="tag tag-camp">Pine Creek free camp or caravan park</span></div>
+      </div>
+    </div>
+
+    <!-- D13 -->
+    <div class="day-entry">
+      <div class="day-col">
+        <div class="day-dot" style="background:var(--bark);color:var(--gold)">D13</div>
+        <div class="day-line" style="min-height:0"></div>
+      </div>
+      <div class="day-content" style="border-bottom:none">
+        <div class="day-sub">Tue 30 Jun → Wed 1 Jul · 250 km sealed · home</div>
+        <div class="day-title">Pine Creek → Darwin ✓</div>
+        <div class="day-desc">Easy 2.5 hour drive up the Stuart and Arnhem Highways. Home by late morning on 1 July — a day ahead of the 2 July deadline. 13 days, ~3,200 km, two boys who've been deep into Arnhem Land and seen Australian culture in a way that will stay with them. The Cub Escape needs a clean. The Scorpions need a check. You need a cold beer and a chair.</div>
+        <div class="day-tags"><span class="tag tag-kids">Home 1 Jul ✓ — a day early</span></div>
+      </div>
+    </div>
+
+   </div>
+  </div>
+
+  <div class="alert alert-red" style="margin-top:16px;">
+    <div class="alert-icon">⚠</div>
+    <div><em>Cahill's Crossing — critical note for D10.</em> Cahill's Crossing on the East Alligator River is tidal and heavily populated with saltwater crocodiles. Cross only at low or slack water — check tide times on the NT Government website before departure. The crossing is approximately 300 mm deep at low tide. Estuarine crocodiles are NOT harmless — this is a genuine safety consideration. Check conditions and watch before crossing.</div>
+  </div>
+
+</div><!-- end itinerary -->
+
+<!-- ══════════════════════════════════════════════════════ MAP -->
+<div class="section" id="map">
+
+  <div class="section-heading">Route Map</div>
+  <p class="section-sub">Darwin circular. Click any marker for day and stop details. Zoom and pan freely.</p>
+
+  <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(61,46,30,0.15);margin-bottom:20px;">
+    <div id="tripmap" style="height:520px;width:100%;"></div>
+  </div>
+
+  <script>
+  (function(){
+    function initMap(){
+      if(typeof L==='undefined'){setTimeout(initMap,100);return;}
+      var map=L.map('tripmap',{zoomControl:true,scrollWheelZoom:false}).setView([-14.5,133.5],6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        maxZoom:13,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+
+      var bark='#3D2E1E',red='#B5411A',amber='#C97D2A',teal='#2E7D6E',sky='#4A8FA0',gold='#E8B84B';
+
+      // Route lines
+      // Outbound: Darwin → Katherine → Central Arnhem Rd → Nhulunbuy
+      var outbound=[[-12.46,130.84],[-14.47,132.27],[-14.9,132.45],[-15.3,132.8],[-15.7,133.5],[-16.1,134.2],[-16.5,134.9],[-12.68,136.82]];
+      L.polyline(outbound,{color:red,weight:3,dashArray:'7 4',opacity:0.75}).addTo(map);
+
+      // Return: Nhulunbuy → Mainoru → Jabiru → Maningrida → Kakadu → Darwin
+      var ret=[[-12.68,136.82],[-15.7,133.5],[-14.47,132.27],[-12.67,132.92],[-12.46,130.84]];
+      L.polyline(ret,{color:teal,weight:3,dashArray:'7 4',opacity:0.7}).addTo(map);
+
+      // Kakadu detail
+      var kakadu=[[-13.05,132.25],[-12.85,132.5],[-12.67,132.92],[-13.38,132.59],[-13.56,132.51]];
+      L.polyline(kakadu,{color:teal,weight:4,opacity:0.8}).addTo(map);
+
+      // Gibb connection (Maningrida detour)
+      var maning=[[-12.67,132.92],[-12.06,134.27]];
+      L.polyline(maning,{color:amber,weight:2.5,dashArray:'5 5',opacity:0.6}).addTo(map);
+
+      function icon(color,size){
+        size=size||11;
+        return L.divIcon({
+          className:'',
+          html:'<div style="width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+color+';border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.4)"></div>',
+          iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2]
+        });
+      }
+
+      var stops=[
+        [-12.46,130.84,bark,15,'Darwin','D1 depart 18 Jun · D13 home 1 Jul'],
+        [-14.47,132.27,sky,12,'Katherine Gorge (Nitmiluk)','D1–D2 · Two-gorge walk · canoe hire · 2 nights'],
+        [-14.9,132.45,'#5C4F42',9,'Beswick / Wulugarr','D3 · First fuel on Central Arnhem Road'],
+        [-15.7,133.5,'#5C4F42',10,'Mainoru Store','D3 + D8 overnight · fuel + camp · ~197 km from Stuart Hwy'],
+        [-16.1,134.2,teal,12,'Bulman (Gulin Gulin)','D4 · NLC permit required · fuel stop'],
+        [-16.48,134.41,gold,13,'Weemol / Mimal Ranger Base','D4 · Chris\'s SSP work visit · Mimal IPA · 1 night'],
+        [-12.68,136.82,gold,14,'Nhulunbuy / Yirrkala','D5–D7 · Buku-Larrŋgay Mulka Art Centre · 2–3 nights'],
+        [-12.06,134.27,amber,10,'Maningrida','D10 optional detour · Maningrida Arts &amp; Culture · NLC permit'],
+        [-12.67,132.92,teal,11,'Jabiru','D9 · Kakadu gateway · fuel · Bowali Visitor Centre'],
+        [-12.40,132.95,teal,11,'Ubirr','D9 · Rock art + sunset escarpment views'],
+        [-12.85,132.49,teal,10,'Cahills Crossing','D10 · Tidal saltwater croc crossing — check tide times!'],
+        [-13.05,132.25,teal,11,'Cooinda / Yellow Water','D11 · Dawn billabong cruise · Mardugal campground'],
+        [-13.38,132.59,teal,10,'Maguk (Barramundi Gorge)','D11 · Waterfall swim · 12 km unsealed track'],
+        [-13.56,132.51,teal,10,'Gunlom (Waterfall Creek)','D12 · Tiered falls · infinity pools · great kids swim'],
+        [-13.82,131.83,'#5C4F42',9,'Pine Creek','D12 overnight return leg'],
+      ];
+
+      stops.forEach(function(s){
+        L.marker([s[0],s[1]],{icon:icon(s[2],s[3])})
+          .bindPopup('<strong style="font-family:sans-serif;font-size:13px">'+s[4]+'</strong><br><span style="font-family:sans-serif;font-size:11px;color:#555">'+s[5]+'</span>')
+          .addTo(map);
+      });
+
+      var legend=L.control({position:'bottomleft'});
+      legend.onAdd=function(){
+        var d=L.DomUtil.create('div');
+        d.style.cssText='background:white;padding:8px 12px;border-radius:6px;font-family:monospace;font-size:10px;line-height:1.9;box-shadow:0 1px 5px rgba(0,0,0,0.2)';
+        d.innerHTML='<div style="color:#666;margin-bottom:3px;font-weight:bold">LEGEND</div>'+
+          '<div><span style="display:inline-block;width:20px;height:3px;background:#B5411A;vertical-align:middle;margin-right:6px"></span>Outbound (Central Arnhem Road)</div>'+
+          '<div><span style="display:inline-block;width:20px;height:3px;background:#2E7D6E;vertical-align:middle;margin-right:6px"></span>Return via Kakadu</div>'+
+          '<div><span style="display:inline-block;width:20px;height:3px;background:#C97D2A;vertical-align:middle;margin-right:6px"></span>Maningrida detour (optional)</div>'+
+          '<div style="margin-top:3px;color:#888">Click markers for details</div>';
+        return d;
+      };
+      legend.addTo(map);
+    }
+    initMap();
+  })();
+  </script>
+
+  <div class="divider"></div>
+  <div class="section-heading" style="font-size:18px;margin-bottom:6px;">Stop-by-stop distances</div>
+  <div class="card" style="overflow:auto">
+    <table class="data-table">
+      <thead><tr><th>Stop</th><th>Day</th><th>Approx km from prev.</th><th>Road</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Darwin</strong></td><td>D1</td><td>—</td><td>—</td><td>Depart 18 Jun. Fill tank.</td></tr>
+        <tr><td><strong>Katherine Gorge</strong></td><td>D1–D2</td><td>300 km</td><td>Sealed</td><td>2 nights. Nitmiluk CP.</td></tr>
+        <tr><td><strong>Beswick / Wulugarr</strong></td><td>D3</td><td>~120 km</td><td>Sealed then gravel</td><td>First fuel on Central Arnhem Rd.</td></tr>
+        <tr><td><strong>Mainoru Store</strong></td><td>D3</td><td>~197 km from Stuart Hwy</td><td>Gravel</td><td>Overnight. Camp $30–40.</td></tr>
+        <tr><td><strong>Bulman</strong></td><td>D4</td><td>~60 km</td><td>Gravel</td><td>NLC permit. Fuel. Closed community.</td></tr>
+        <tr><td><strong>Weemol (Mimal)</strong></td><td>D4</td><td>~10 km</td><td>Gravel</td><td>Mimal Ranger Base. Arrange with Dominic.</td></tr>
+        <tr><td><strong>Nhulunbuy / Yirrkala</strong></td><td>D5–D7</td><td>~470 km</td><td>Gravel</td><td>2–3 nights. BP fuel. Woolworths.</td></tr>
+        <tr><td><strong>Mainoru (return)</strong></td><td>D8</td><td>~470 km</td><td>Gravel</td><td>Overnight.</td></tr>
+        <tr><td><strong>Jabiru</strong></td><td>D9</td><td>~250 km</td><td>Gravel + sealed</td><td>Fuel. Kakadu entry. Ubirr.</td></tr>
+        <tr><td><strong>Maningrida (optional)</strong></td><td>D10</td><td>~270 km from Jabiru</td><td>Gravel (unsealed)</td><td>NLC permit. Very long day if return.</td></tr>
+        <tr><td><strong>Cooinda / Yellow Water</strong></td><td>D11</td><td>~50 km from Jabiru</td><td>Sealed</td><td>Dawn cruise. Camp Mardugal.</td></tr>
+        <tr><td><strong>Gunlom</strong></td><td>D12</td><td>~55 km</td><td>33 km unsealed</td><td>Infinity pools. Swim. Pine Creek after.</td></tr>
+        <tr><td><strong>Darwin</strong></td><td>D13</td><td>~250 km</td><td>Sealed</td><td>Home 1 Jul ✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- end map -->
+
+<!-- ══════════════════════════════════════════════════════ PERMITS -->
+<div class="section" id="permits">
+
+  <div class="section-heading">Permits — Apply Now</div>
+  <p class="section-sub">You cannot legally enter Arnhem Land without permits. All applications are free or low-cost. Apply at least 4–6 weeks before departure.</p>
+
+  <div class="alert alert-red">
+    <div class="alert-icon">🔑</div>
+    <div><em>Permits are not optional.</em> Unauthorised entry onto Aboriginal Land is a serious offence under the Aboriginal Land Rights (NT) Act 1976. Fines are significant. Random permit checks are conducted by police and rangers on the Central Arnhem Road and at recreation areas.</div>
+  </div>
+
+  <div class="card" style="overflow:auto;margin-top:16px;">
+    <table class="data-table">
+      <thead><tr><th>Permit</th><th>Priority</th><th>Who Issues</th><th>How to Apply</th><th>Cost</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>NLC Transit Permit</strong><br>Central Arnhem Highway (Katherine → Nhulunbuy)</td>
+          <td><span class="p-now">NOW</span></td>
+          <td>Northern Land Council (NLC)</td>
+          <td>Online: <strong>nlc.org.au</strong> → "Visiting Aboriginal Lands". Or call (08) 8920 5100 / Darwin office 45 Mitchell St. Describe the Cub Escape as a heavy-duty off-road camper trailer, not a caravan.</td>
+          <td>Free</td>
+        </tr>
+        <tr>
+          <td><strong>NLC Community Permit</strong><br>Weemol / Bulman access</td>
+          <td><span class="p-now">NOW</span></td>
+          <td>Northern Land Council (NLC)</td>
+          <td>Same NLC application process. Specify Weemol and Bulman communities. Chris's SSP affiliation with Mimal and contact with Dominic Nicholls (CEO) should support the application significantly. Contact Natalie Carey at Mimal to confirm the visit and provide a supporting letter.</td>
+          <td>Free</td>
+        </tr>
+        <tr>
+          <td><strong>Dhimurru Visitor Access Permit</strong><br>East Arnhem recreation areas, Yirrkala beaches, camping</td>
+          <td><span class="p-now">NOW</span></td>
+          <td>Dhimurru Aboriginal Corporation</td>
+          <td>Online booking: <strong>dhimurru.com.au</strong> → Permits. Instant approval for general permit. Camping permits for specific sites booked separately — popular sites fill ahead in dry season. Phone: (08) 8987 3992.</td>
+          <td>General permit ~$25 adult · Camping extra</td>
+        </tr>
+        <tr>
+          <td><strong>NLC Permit — Yirrkala community</strong><br>Required to visit Yirrkala (beyond the art centre)</td>
+          <td><span class="p-now">NOW</span></td>
+          <td>Northern Land Council (NLC)</td>
+          <td>Via NLC online or Nhulunbuy office. Note: visitors may visit Buku-Larrŋgay Mulka Art Centre without a permit — permit is required to enter the community itself beyond the art centre.</td>
+          <td>Free</td>
+        </tr>
+        <tr>
+          <td><strong>NLC Permit — Gunbalanya</strong><br>For Cahill's Crossing / Maningrida detour via Gunbalanya</td>
+          <td><span class="p-soon">SOON</span></td>
+          <td>Northern Land Council (NLC) / Injalak Arts</td>
+          <td>Gunbalanya day visit permit available from NLC Jabiru office or Injalak Arts. Cost ~$16.50/adult (children free). Required if stopping in Gunbalanya — not needed for transit only.</td>
+          <td>~$16.50/adult</td>
+        </tr>
+        <tr>
+          <td><strong>Kakadu Park Pass</strong><br>Required for all Kakadu National Park entry</td>
+          <td><span class="p-soon">SOON</span></td>
+          <td>Parks Australia</td>
+          <td>Buy online at <strong>parksaustralia.gov.au/kakadu</strong> or at Bowali Visitor Centre on arrival. Note: NT residents are exempt from Kakadu entry fees — confirm your NT residency status.</td>
+          <td>NT residents: free · Interstate: ~$40 adult</td>
+        </tr>
+        <tr>
+          <td><strong>East Arnhem Land Dry Area — Liquor</strong><br>Nhulunbuy is a restricted alcohol area</td>
+          <td><span class="p-pre">PRE-TRIP</span></td>
+          <td>NT Dept of Attorney General</td>
+          <td>To purchase takeaway alcohol in Nhulunbuy you need a local liquor permit. Easiest option: purchase any alcohol you want in Katherine before entering Arnhem Land and bring it with you. You can drink it at camps — just not in public places.</td>
+          <td>Free (permit) · or buy in Katherine</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-amber" style="margin-top:16px;">
+    <div class="alert-icon">🏕</div>
+    <div><em>Cub Escape permit tip:</em> When applying to the NLC, be specific — describe it as a "Cub Escape off-road camper trailer" with unladen tow weight and dimensions. The NLC's concern is standard caravans which are unsuitable for the road, not purpose-built off-road trailers. Your professional connection via Mimal/SSP strengthens the application considerably.</div>
+  </div>
+
+  <div class="alert alert-teal" style="margin-top:12px;">
+    <div class="alert-icon">📋</div>
+    <div><em>Mimal connection:</em> Contact Dominic Nicholls (CEO, Mimal Land and Water Aboriginal Corporation) and Natalie Carey (Program Manager) well ahead of the trip to confirm the Weemol visit, arrange access, and discuss any protocols for bringing Lewis and Reuben onto Country. This is not just a courtesy — it's culturally appropriate and practically necessary for the community permit application.</div>
+  </div>
+
+</div><!-- end permits -->
+
+<!-- ══════════════════════════════════════════════════════ VEHICLE -->
+<div class="section" id="vehicle">
+
+  <div class="section-heading">Vehicle — Same Rig, New Terrain</div>
+  <p class="section-sub">Same Ford Everest + Cub Escape as the Gibb trip. Most of your prep carries over. Key differences for the Central Arnhem Road are noted below.</p>
+
+  <div class="alert alert-teal">
+    <div class="alert-icon">✓</div>
+    <div><em>Your rig is well proven after the Gibb.</em> The Central Arnhem Road is rougher in places (more bull dust, less maintained than the Gibb) but shorter overall. The 120L ARB tank + 40L jerry cans is if anything even more useful here — fuel points are more spread out. All the gear from the Gibb applies directly.</div>
+  </div>
+
+  <h4>What's different vs the Gibb</h4>
+  <ul class="plain">
+    <li><strong>Bull dust pockets</strong> — more prevalent on the Central Arnhem Road than the Gibb. Approach at lower speed (50–60 km/h) — hitting bull dust at speed causes sudden heavy steering pull and can cause a spin. Your suspension handles it but respect the conditions.</li>
+    <li><strong>Water crossings</strong> — several remain even in dry season. The Wilton River near Bulman and Goyder River crossings now have bridges. Check NT Road Report before departure for any unexpected closures.</li>
+    <li><strong>Fuel gaps are wider</strong> — Stuart Hwy turnoff to Nhulunbuy is ~729 km with fuel at Beswick (~60 km), Mainoru (~197 km), Bulman (~256 km, NLC permit needed to enter community), and Nhulunbuy BP. With 160L total capacity you can cover the full road without stress but top up at every opportunity.</li>
+    <li><strong>Speed limit</strong> — 80 km/h maximum recommended on Central Arnhem Road unsealed sections. At 80 km/h vs 120 km/h your fuel consumption drops significantly — expect 9–10L/100km on the gravel rather than 12L.</li>
+    <li><strong>Road trains</strong> — regular community freight deliveries. Pass carefully, pull right off the road to let them through, wait for the dust to clear before moving.</li>
+    <li><strong>Remote recovery</strong> — the Central Arnhem Road has far fewer travellers than the Gibb. Your satellite comms (iPhone 17 Pro Max + PLB) are more critical here. Leave a detailed trip plan with a Darwin contact including expected overnight locations and check-in points (Mainoru has phone signal, Nhulunbuy obviously).</li>
+  </ul>
+
+  <div class="divider"></div>
+  <h4>Tyre Pressures — Central Arnhem Road</h4>
+  <ul class="plain">
+    <li>Air down before the unsealed section (Stuart Hwy turnoff) — 28–30 PSI with the Cub Escape loaded</li>
+    <li>Bull dust sections: keep pressure up slightly (30–32 PSI) for better steering control</li>
+    <li>Reinflate before Nhulunbuy — there are sealed sections on the Gove Peninsula</li>
+    <li>Reinflate fully before Kakadu Highway return — sealed road to Pine Creek and Darwin</li>
+  </ul>
+
+  <div class="divider"></div>
+  <h4>Cahills Crossing — specific vehicle prep</h4>
+  <ul class="plain">
+    <li>Cahill's Crossing is approximately 300 mm deep at low tide — well within Everest's wading depth</li>
+    <li>Check tide times before approaching (NT Government tidal data online)</li>
+    <li>Walk the crossing before driving — check depth, substrate, and confirm no crocodile presence at the crossing point</li>
+    <li>Cross in low range, steady pace — don't stop</li>
+    <li>The Cub Escape will get wet — pack accordingly (electronics in dry bags)</li>
+  </ul>
+
+</div><!-- end vehicle -->
+
+<!-- ══════════════════════════════════════════════════════ BOOKINGS -->
+<div class="section" id="bookings">
+
+  <div class="section-heading">Bookings & Contacts</div>
+  <p class="section-sub">All essential pre-trip arrangements. Permits (listed above) are separate — book those first.</p>
+
+  <div class="card" style="overflow:auto">
+    <table class="data-table">
+      <thead><tr><th>What</th><th>Priority</th><th>How</th><th>Cost est.</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Mimal / Weemol visit</strong><br>Community access + overnight arrangement</td>
+          <td><span class="p-now">NOW</span></td>
+          <td>Contact Dominic Nicholls (CEO, Mimal) and Natalie Carey (Program Manager) directly. Confirm access, appropriate protocols for visiting with children, and where to camp/stay at Weemol.</td>
+          <td>Arrange with Mimal</td>
+        </tr>
+        <tr>
+          <td><strong>Nitmiluk Caravan Park</strong><br>Katherine Gorge · 2 nights (D1–D2)</td>
+          <td><span class="p-now">NOW</span></td>
+          <td>Book at <strong>nitmiluk.com.au</strong> or (08) 8972 1253. Peak dry season fills up.</td>
+          <td>~$55–70/night powered</td>
+        </tr>
+        <tr>
+          <td><strong>Dhimurru camping permit</strong><br>Beach camp near Yirrkala (D6–D7)</td>
+          <td><span class="p-now">NOW</span></td>
+          <td>Book via <strong>dhimurru.com.au</strong>. Camping sites at Garanhan (Macassan Beach) and Guwatjurumurru (Giddy River) are limited — book well ahead.</td>
+          <td>~$15–25/night</td>
+        </tr>
+        <tr>
+          <td><strong>Walkabout Lodge or Gove Peninsula Motel</strong><br>Nhulunbuy · D5 (night arrival)</td>
+          <td><span class="p-soon">SOON</span></td>
+          <td>Walkabout Lodge: (08) 8987 0700. Gove Motel: govemotel.com. Book a room for first night arrival — camps not suitable for late exhausted arrival after 470 km gravel.</td>
+          <td>~$140–180/night room</td>
+        </tr>
+        <tr>
+          <td><strong>Yellow Water Dawn Cruise</strong><br>Cooinda · D11</td>
+          <td><span class="p-soon">SOON</span></td>
+          <td>Book at <strong>kakadutourism.com</strong> or (08) 8979 0145. The 6:15am cruise is the best — wildlife most active at dawn. Books out weeks ahead in dry season.</td>
+          <td>~$80 adult · ~$40 child</td>
+        </tr>
+        <tr>
+          <td><strong>Mardugal Campground, Cooinda</strong><br>D11 overnight</td>
+          <td><span class="p-soon">SOON</span></td>
+          <td>Book at parksaustralia.gov.au or at the Bowali Visitor Centre. Popular site — book ahead.</td>
+          <td>~$20–35/night</td>
+        </tr>
+        <tr>
+          <td><strong>Mainoru Store camping</strong><br>D3 and D8 overnight</td>
+          <td><span class="p-pre">PRE-TRIP</span></td>
+          <td>Call Mainoru Store ahead to confirm camping availability. (08) 8975 4855 (may vary). Alternatively camp at the free gravel pit at the turnoff intersection.</td>
+          <td>~$35 powered · Free gravel pit</td>
+        </tr>
+        <tr>
+          <td><strong>Katherine Gorge canoe hire</strong></td>
+          <td><span class="p-pre">PRE-TRIP</span></td>
+          <td>Book at Nitmiluk Visitor Centre or nitmiluk.com.au. Half-day or full-day hire available.</td>
+          <td>~$25/hr per canoe</td>
+        </tr>
+        <tr>
+          <td><strong>NT Road Report</strong></td>
+          <td><span class="p-pre">PRE-TRIP</span></td>
+          <td>Check <strong>ntlis.nt.gov.au/roadreport</strong> the day before departure and again at Katherine. Subscribe to SMS alerts for the Central Arnhem Road.</td>
+          <td>Free</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-amber" style="margin-top:16px;">
+    <div class="alert-icon">🍺</div>
+    <div><em>Alcohol — plan ahead.</em> East Arnhem Land is a restricted alcohol area. Buy any alcohol you want in Katherine before entering the region. You can drink at camps and accommodation — just not in public places or on the road. The Gove Peninsula Motel and pub in Nhulunbuy are licensed venues.</div>
+  </div>
+
+</div><!-- end bookings -->
+
+<!-- ══════════════════════════════════════════════════════ PACKING -->
+<div class="section" id="packing">
+
+  <div class="section-heading">Packing Checklist</div>
+  <p class="section-sub">Carries over from the Gibb trip with Arnhem Land-specific additions. Tick off as you pack.</p>
+
+  <ul class="checklist">
+    <li class="cat">— Permits & Documents (carry physical copies) —</li>
+    <li><input type="checkbox" id="a1"><label for="a1">NLC Transit Permit (Central Arnhem Road) — printed copy in glovebox</label></li>
+    <li><input type="checkbox" id="a2"><label for="a2">NLC Community Permit (Weemol/Bulman) — printed copy in glovebox</label></li>
+    <li><input type="checkbox" id="a3"><label for="a3">Dhimurru Visitor Access + Camping Permit — printed copy</label></li>
+    <li><input type="checkbox" id="a4"><label for="a4">NLC Gunbalanya permit (if doing Maningrida detour)</label></li>
+    <li><input type="checkbox" id="a5"><label for="a5">Kakadu Park Pass (NT residents: free — confirm eligibility)</label></li>
+    <li><input type="checkbox" id="a6"><label for="a6">Chris's Mimal SSP / research credentials / Dominic Nicholls contact number</label></li>
+
+    <li class="cat">— Tyres & Recovery (same as Gibb) —</li>
+    <li><input type="checkbox" id="b1"><label for="b1">✓ Pirelli Scorpion AT+ — check tread depth + condition after Gibb</label></li>
+    <li><input type="checkbox" id="b2"><label for="b2">✓ 2× Everest spares (under rear + ARB roof rack)</label></li>
+    <li><input type="checkbox" id="b3"><label for="b3">✓ 1× Cub Escape Goodyear DuraTrac spare</label></li>
+    <li><input type="checkbox" id="b4"><label for="b4">✓ ARB compressor + tyre repair kit</label></li>
+    <li><input type="checkbox" id="b5"><label for="b5">✓ MAXTRAX × 2 on roof rack</label></li>
+    <li><input type="checkbox" id="b6"><label for="b6">✓ Snatch strap + shackles + tow strap</label></li>
+    <li><input type="checkbox" id="b7"><label for="b7">⚠ Hi-lift jack or ply base plate for factory jack — sort before departure</label></li>
+
+    <li class="cat">— Fuel & Water —</li>
+    <li><input type="checkbox" id="c1"><label for="c1">✓ 120L ARB long range tank — fill Darwin</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">✓ 2× 20L jerry cans on Cub Escape — fill Darwin</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3">✓ 180L water in Cub Escape — fill Darwin. Cahills Crossing is saltwater — do not rely on river water.</label></li>
+
+    <li class="cat">— Communications —</li>
+    <li><input type="checkbox" id="d1"><label for="d1">✓ UHF CB radio — channel 40 for road comms</label></li>
+    <li><input type="checkbox" id="d2"><label for="d2">✓ PLB — confirm AMSA registration current</label></li>
+    <li><input type="checkbox" id="d3"><label for="d3">✓ iPhone 17 Pro Max (Telstra) — Telstra satellite messaging active</label></li>
+    <li><input type="checkbox" id="d4"><label for="d4">NT Road Report subscription set up (SMS alerts for Central Arnhem Road)</label></li>
+    <li><input type="checkbox" id="d5"><label for="d5">Trip plan filed with Darwin contact — Mainoru + Nhulunbuy + Jabiru as check-in points</label></li>
+    <li><input type="checkbox" id="d6"><label for="d6">Hema Explorer app + NT offline maps downloaded before departure</label></li>
+
+    <li class="cat">— Arnhem Land Specific —</li>
+    <li><input type="checkbox" id="e1"><label for="e1">Waterproof dry bags for electronics — Cahills Crossing + river crossings</label></li>
+    <li><input type="checkbox" id="e2"><label for="e2">Insect repellent (heavy duty) — sandflies and mosquitoes are intense at Dhimurru beach camps and Kakadu billabongs</label></li>
+    <li><input type="checkbox" id="e3"><label for="e3">Tide chart for Cahills Crossing printed + saved offline</label></li>
+    <li><input type="checkbox" id="e4"><label for="e4">Alcohol purchased in Katherine — enough for the full Arnhem Land / dry area section</label></li>
+    <li><input type="checkbox" id="e5"><label for="e5">Small gift or contribution for Mimal staff at Weemol (culturally appropriate — discuss with Dominic/Natalie)</label></li>
+    <li><input type="checkbox" id="e6"><label for="e6">Cash — some remote stores don't accept card. $200 cash minimum.</label></li>
+    <li><input type="checkbox" id="e7"><label for="e7">Camera for art centres — confirm photography permissions at Buku-Larrŋgay Mulka and Maningrida Arts (some works cannot be photographed)</label></li>
+
+    <li class="cat">— Kids Specific —</li>
+    <li><input type="checkbox" id="f1"><label for="f1">✓ Rashies + wetsuits — Katherine Gorge water is cooler in June</label></li>
+    <li><input type="checkbox" id="f2"><label for="f2">✓ Waterproof headlamps × 2 (Kakadu night walks)</label></li>
+    <li><input type="checkbox" id="f3"><label for="f3">Sketchbook + watercolour set — for sketching Country and art centre visits</label></li>
+    <li><input type="checkbox" id="f4"><label for="f4">Sunscreen SPF 50+ — the Top End sun is intense even in June</label></li>
+    <li><input type="checkbox" id="f5"><label for="f5">✓ Aqua shoes for gorge + crossing wading</label></li>
+    <li><input type="checkbox" id="f6"><label for="f6">Simple illustrated Yolŋu / Kakadu fauna guide for the boys — identifies birds, reptiles at billabongs</label></li>
+
+    <li class="cat">— Vehicle & Mechanical —</li>
+    <li><input type="checkbox" id="g1"><label for="g1">Full service before departure (Cub Escape wheel bearings especially — repack after Gibb)</label></li>
+    <li><input type="checkbox" id="g2"><label for="g2">✓ Spare engine oil, coolant, brake fluid</label></li>
+    <li><input type="checkbox" id="g3"><label for="g3">✓ Basic tool kit + zip ties + duct tape + JB Weld</label></li>
+    <li><input type="checkbox" id="g4"><label for="g4">✓ Jump starter pack</label></li>
+    <li><input type="checkbox" id="g5"><label for="g5">Air filter check — Central Arnhem Road bull dust is extremely fine and penetrating</label></li>
+  </ul>
+
+</div><!-- end packing -->
+
+<!-- ══════════════════════════════════════════════════════ BUDGET -->
+<div class="section" id="budget">
+
+  <div class="section-heading">Trip Budget Estimator</div>
+  <p class="section-sub">1 adult + 2 kids. Adjust the sliders for current fuel prices. All figures AUD.</p>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="card-icon" style="background:rgba(181,65,26,0.1)">⛽</div>
+      <h3>Adjust Fuel & Food Prices</h3>
+      <span class="toggle">▾</span>
+    </div>
+    <div class="card-body open">
+      <div class="slider-grid">
+        <div class="slider-block">
+          <label>Town Diesel (Darwin/Katherine)</label>
+          <div class="slider-row">
+            <input type="range" id="sl-town" min="160" max="230" value="190" step="1" oninput="document.getElementById('lbl-town').textContent='$'+(this.value/100).toFixed(2);calcBudget();">
+            <span id="lbl-town">$1.90</span>
+          </div>
+        </div>
+        <div class="slider-block">
+          <label>Remote Diesel (Beswick / Mainoru / Bulman)</label>
+          <div class="slider-row">
+            <input type="range" id="sl-remote" min="200" max="320" value="255" step="1" oninput="document.getElementById('lbl-remote').textContent='$'+(this.value/100).toFixed(2);calcBudget();">
+            <span id="lbl-remote">$2.55</span>
+          </div>
+        </div>
+        <div class="slider-block">
+          <label>Daily Camp Groceries</label>
+          <div class="slider-row">
+            <input type="range" id="sl-food" min="30" max="100" value="55" step="5" oninput="document.getElementById('lbl-food').textContent='$'+this.value+'/day';calcBudget();">
+            <span id="lbl-food">$55/day</span>
+          </div>
+        </div>
+        <div class="slider-block">
+          <label>Nhulunbuy / Kakadu Diesel</label>
+          <div class="slider-row">
+            <input type="range" id="sl-nhul" min="200" max="300" value="240" step="1" oninput="document.getElementById('lbl-nhul').textContent='$'+(this.value/100).toFixed(2);calcBudget();">
+            <span id="lbl-nhul">$2.40</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE TOTALS -->
+  <div class="budget-hero">
+    <div>
+      <div class="bh-label">Estimated Total</div>
+      <div id="grand-total" class="bh-total">$3,240</div>
+      <div class="bh-sub">1 adult + 2 kids · 13 days</div>
+    </div>
+    <div class="bh-grid">
+      <div class="bh-cell"><div id="fuel-total" class="bh-val" style="color:#B5411A">$820</div><div class="bh-key">Fuel</div></div>
+      <div class="bh-cell"><div id="accom-total" class="bh-val" style="color:#4A8FA0">$640</div><div class="bh-key">Accommodation</div></div>
+      <div class="bh-cell"><div id="food-total" class="bh-val" style="color:#E8B84B">$970</div><div class="bh-key">Food</div></div>
+      <div class="bh-cell"><div id="other-total" class="bh-val" style="color:#2E7D6E">$520</div><div class="bh-key">Permits + Activities</div></div>
+    </div>
+  </div>
+
+  <!-- BREAKDOWN TABLE -->
+  <div class="section-heading" style="font-size:18px;margin-bottom:6px;">Line-by-line</div>
+  <div class="card" style="overflow:auto">
+    <table class="data-table">
+      <thead><tr><th>Category</th><th>Item</th><th>Basis</th><th style="text-align:right">Est.</th></tr></thead>
+      <tbody>
+        <tr><td colspan="4" style="background:rgba(181,65,26,0.05);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);padding:8px 10px">⛽ Fuel</td></tr>
+        <tr><td></td><td><strong>Darwin → Katherine → Central Arnhem Rd</strong></td><td>~420 km · 50L town diesel</td><td id="f1" style="text-align:right;font-weight:500">$95</td></tr>
+        <tr><td></td><td><strong>Central Arnhem Road (full length + Weemol)</strong></td><td>~800 km gravel · 80L remote (at 10L/100km)</td><td id="f2" style="text-align:right;font-weight:500">$204</td></tr>
+        <tr><td></td><td><strong>Nhulunbuy area + return to Mainoru</strong></td><td>~960 km · 96L Nhulunbuy/remote</td><td id="f3" style="text-align:right;font-weight:500">$230</td></tr>
+        <tr><td></td><td><strong>Jabiru + Kakadu + Pine Creek + Darwin</strong></td><td>~560 km · 56L town/regional</td><td id="f4" style="text-align:right;font-weight:500">$107</td></tr>
+        <tr style="background:rgba(181,65,26,0.04)"><td></td><td><strong>Fuel subtotal</strong></td><td style="color:var(--stone);font-size:11px">~2,740 km · ~282L estimate</td><td id="fuel-sub" style="text-align:right;font-weight:700;color:var(--red)">$636</td></tr>
+
+        <tr><td colspan="4" style="background:rgba(74,143,160,0.05);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--sky);padding:8px 10px">🏕 Accommodation</td></tr>
+        <tr><td></td><td><strong>Nitmiluk CP Katherine</strong></td><td>2 nights powered</td><td style="text-align:right;font-weight:500">$130</td></tr>
+        <tr><td></td><td><strong>Mainoru Store camp × 2</strong></td><td>2 nights (D3 + D8)</td><td style="text-align:right;font-weight:500">$70</td></tr>
+        <tr><td></td><td><strong>Weemol / Bulman (Mimal)</strong></td><td>1 night — arrange with Mimal</td><td style="text-align:right;font-weight:500">$0</td></tr>
+        <tr><td></td><td><strong>Walkabout Lodge / Gove Motel</strong></td><td>1 night room arrival D5</td><td style="text-align:right;font-weight:500">$160</td></tr>
+        <tr><td></td><td><strong>Dhimurru beach camp</strong></td><td>2 nights (D6–D7)</td><td style="text-align:right;font-weight:500">$50</td></tr>
+        <tr><td></td><td><strong>Kakadu camps (Merl + Mardugal)</strong></td><td>2 nights</td><td style="text-align:right;font-weight:500">$55</td></tr>
+        <tr><td></td><td><strong>Pine Creek camp</strong></td><td>1 night</td><td style="text-align:right;font-weight:500">$25</td></tr>
+        <tr style="background:rgba(74,143,160,0.04)"><td></td><td><strong>Accommodation subtotal</strong></td><td style="color:var(--stone);font-size:11px">13 nights total</td><td style="text-align:right;font-weight:700;color:var(--sky)">$490</td></tr>
+
+        <tr><td colspan="4" style="background:rgba(46,125,110,0.05);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);padding:8px 10px">🎟 Permits + Activities</td></tr>
+        <tr><td></td><td><strong>Dhimurru Visitor Access Permit</strong></td><td>1 adult × ~$25</td><td style="text-align:right;font-weight:500">$25</td></tr>
+        <tr><td></td><td><strong>Dhimurru camping permits</strong></td><td>2 nights × ~$25</td><td style="text-align:right;font-weight:500">$50</td></tr>
+        <tr><td></td><td><strong>NLC Gunbalanya permit</strong></td><td>1 adult × $16.50</td><td style="text-align:right;font-weight:500">$17</td></tr>
+        <tr><td></td><td><strong>Kakadu Park Pass</strong></td><td>NT residents: free. Interstate: ~$40/adult</td><td style="text-align:right;font-weight:500">$0–40</td></tr>
+        <tr><td></td><td><strong>Katherine Gorge canoe hire</strong></td><td>Half day × 2 people</td><td style="text-align:right;font-weight:500">$100</td></tr>
+        <tr><td></td><td><strong>Yellow Water Dawn Cruise</strong></td><td>1 adult + 2 kids</td><td style="text-align:right;font-weight:500">$160</td></tr>
+        <tr><td></td><td><strong>Buku-Larrŋgay Mulka Art Centre</strong></td><td>Entry + small purchase (art/print for the boys)</td><td style="text-align:right;font-weight:500">$60</td></tr>
+        <tr><td></td><td><strong>Misc entry fees + road charges</strong></td><td>Nitmiluk walk fees, Kakadu sites</td><td style="text-align:right;font-weight:500">$40</td></tr>
+        <tr style="background:rgba(46,125,110,0.04)"><td></td><td><strong>Permits + activities subtotal</strong></td><td></td><td style="text-align:right;font-weight:700;color:var(--teal)">$452</td></tr>
+
+        <tr><td colspan="4" style="background:rgba(201,125,42,0.06);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);padding:8px 10px">🍽 Food</td></tr>
+        <tr><td></td><td><strong>Darwin pre-trip shop</strong></td><td>4–5 days provisions</td><td style="text-align:right;font-weight:500">$200</td></tr>
+        <tr><td></td><td><strong>Katherine + Nhulunbuy resupply</strong></td><td>Woolworths Nhulunbuy mainly</td><td style="text-align:right;font-weight:500">$150</td></tr>
+        <tr><td></td><td><strong>Roadhouse meals + snacks</strong></td><td>Mainoru, roadhouses, Jabiru</td><td style="text-align:right;font-weight:500">$100</td></tr>
+        <tr><td></td><td><strong>Nhulunbuy meal out</strong></td><td>Gove Boat Club or pub dinner</td><td style="text-align:right;font-weight:500">$80</td></tr>
+        <tr><td></td><td><strong>Camp cooking</strong></td><td id="food-camp-label">9 camp days × $55/day</td><td id="food-camp" style="text-align:right;font-weight:500">$495</td></tr>
+        <tr style="background:rgba(201,125,42,0.04)"><td></td><td><strong>Food subtotal</strong></td><td style="color:var(--stone);font-size:11px">Mostly self-catered</td><td id="food-sub" style="text-align:right;font-weight:700;color:var(--amber)">$1,025</td></tr>
+
+        <tr><td colspan="4" style="background:rgba(61,46,30,0.04);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--bark);padding:8px 10px">🔧 Contingency (10%)</td></tr>
+        <tr><td></td><td><strong>Buffer</strong></td><td>Tyre repair, unexpected overnight, ice, cash at remote stores</td><td id="contingency" style="text-align:right;font-weight:500">$260</td></tr>
+
+        <tr style="background:var(--bark)">
+          <td colspan="3" style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;padding:14px 10px">ESTIMATED TOTAL</td>
+          <td id="grand-total-table" style="text-align:right;color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;padding:14px 10px">$2,863</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-teal" style="margin-top:16px;">
+    <div class="alert-icon">✓</div>
+    <div><em>Cheaper than the Gibb:</em> This trip is shorter overall, most camping is free or very low cost, and there's no El Questro or Broome premium. The main costs are the Nhulunbuy accommodation (one night) and the Yellow Water cruise. Art centre visits are low-cost relative to their significance.</div>
+  </div>
+  <div class="alert alert-amber" style="margin-top:12px;">
+    <div class="alert-icon">💡</div>
+    <div><em>Not included:</em> Pre-trip gear service and any parts, Garmin inReach subscription if used, and any art purchases at Buku-Larrŋgay Mulka or Maningrida Arts (budget separately — these are the real deal and worth every dollar).</div>
+  </div>
+
+  <script>
+  function calcBudget(){
+    var town=parseInt(document.getElementById("sl-town").value)/100;
+    var rem=parseInt(document.getElementById("sl-remote").value)/100;
+    var nhul=parseInt(document.getElementById("sl-nhul").value)/100;
+    var food=parseInt(document.getElementById("sl-food").value);
+    var f1=Math.round(50*town);
+    var f2=Math.round(80*rem);
+    var f3=Math.round(96*nhul);
+    var f4=Math.round(56*town);
+    var fuelTotal=f1+f2+f3+f4;
+    document.getElementById("f1").textContent="$"+f1;
+    document.getElementById("f2").textContent="$"+f2;
+    document.getElementById("f3").textContent="$"+f3;
+    document.getElementById("f4").textContent="$"+f4;
+    document.getElementById("fuel-sub").textContent="$"+fuelTotal;
+    document.getElementById("fuel-total").textContent="$"+fuelTotal;
+    var campFood=9*food;
+    var foodTotal=campFood+200+150+100+80;
+    document.getElementById("food-camp").textContent="$"+campFood;
+    document.getElementById("food-camp-label").textContent="9 camp days × $"+food+"/day";
+    document.getElementById("food-sub").textContent="$"+foodTotal;
+    document.getElementById("food-total").textContent="$"+foodTotal;
+    var accom=490,passes=452;
+    document.getElementById("accom-total").textContent="$"+accom;
+    document.getElementById("other-total").textContent="$"+passes;
+    var sub=fuelTotal+accom+passes+foodTotal;
+    var cont=Math.round(sub*0.10);
+    document.getElementById("contingency").textContent="$"+cont;
+    var grand=sub+cont;
+    document.getElementById("grand-total").textContent="$"+grand.toLocaleString();
+    document.getElementById("grand-total-table").textContent="$"+grand.toLocaleString();
+  }
+  window.addEventListener("load",calcBudget);
+  </script>
+
+</div><!-- end budget -->
+
+</div><!-- end main -->
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+function toggle(header){
+  var body=header.nextElementSibling;
+  header.classList.toggle('open');
+  body.classList.toggle('open');
+}
+document.querySelectorAll('.card-header').forEach((h,i)=>{
+  if(i===0){h.classList.add('open');h.nextElementSibling.classList.add('open');}
+});
+</script>
+</body>
+</html>
